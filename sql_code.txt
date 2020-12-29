@@ -1,0 +1,704 @@
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'gh_Spells')
+BEGIN
+	DROP TABLE gh_Spells
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'gh_Skills')
+BEGIN
+	DROP TABLE gh_Skills
+END
+GO
+
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'gh_Stats')
+BEGIN
+	DROP TABLE gh_Stats
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'gh_Element')
+BEGIN
+	DROP TABLE gh_Element
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'gh_Payment')
+BEGIN
+	DROP TABLE gh_Payment
+END
+GO
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'gh_Caster')
+BEGIN
+	DROP TABLE gh_Caster
+END
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Creating Caster table
+GO
+
+CREATE TABLE gh_Caster (
+	--Columns for the caster table
+	gh_CasterID int identity, 
+	CasterName varchar(30) not null, 
+	CasterType varchar(30) not null,
+	ElementType varchar(30) not null,
+	Age int,
+	Academy varchar(50),
+	HomeCity varchar(30),
+	--Constraints on the Caster Table
+	CONSTRAINT PK_gh_Caster PRIMARY KEY (gh_CasterID),
+	CONSTRAINT U1_gh_Caster UNIQUE(CasterName),
+	)
+-- End creating the Caster table
+
+
+-- Creating Payment table
+CREATE TABLE gh_Payment (
+	--Columns for the Payment table
+	gh_PaymentID int identity not null,
+	gh_CasterID int not null,
+	Gold int,
+	Silver int,
+	--Constraints on the Payment table
+	CONSTRAINT PK_gh_Payment PRIMARY KEY (gh_PaymentID),
+	CONSTRAINT FK1_gh_Payment FOREIGN KEY (gh_CasterID) REFERENCES gh_Caster(gh_CasterID)
+	)
+-- End creating the Payment table
+
+
+
+-- Creating Stats table
+CREATE TABLE gh_Stats (
+	--Columns for the Stats table
+	gh_StatsID int identity not null,
+	gh_CasterID int not null,
+	Strength int,
+	Dexterity int,
+	Constitution int,
+	Intelligence int,
+	Wisdom int,
+	Charisma int,
+	--Constraints on the Stats table
+	CONSTRAINT PK_gh_Stats PRIMARY KEY (gh_StatsID),
+	CONSTRAINT FK1_gh_Stats FOREIGN KEY (gh_CasterID) REFERENCES gh_Caster(gh_CasterID)
+	)
+-- End creating the Stats table
+
+
+
+-- Creating Element table
+CREATE TABLE gh_Element (
+	--Columns for the Element table
+	gh_ElementID int identity not null,
+	gh_CasterID int not null,
+	ElementType varchar(30) not null, 
+	Mastery varchar(30) not null,
+	--Constraints on the Element table
+	CONSTRAINT PK_gh_Element PRIMARY KEY (gh_ElementID),
+	CONSTRAINT FK1_gh_Element FOREIGN KEY (gh_CasterID) REFERENCES gh_Caster(gh_CasterID)
+	)
+-- End creating the Element table
+
+
+
+
+-- Creating Spells table
+CREATE TABLE gh_Spells (
+	--Columns for the Spells table
+	gh_SpellsID int identity not null,
+	gh_ElementID int,
+	gh_ElementType varchar(30) not null,
+	SpellName varchar(30) not null,
+	--Constraints on the Spells table
+	CONSTRAINT PK_gh_Spells PRIMARY KEY (gh_SpellsID),
+	CONSTRAINT FK1_gh_Spells FOREIGN KEY (gh_ElementID) REFERENCES gh_Element(gh_ElementID)
+	)
+-- End creating the Spells table
+
+
+
+-- Creating Skills table
+CREATE TABLE gh_Skills (
+	--Columns for the Skills table
+	gh_SkillsID int identity not null,
+	gh_CasterID int,
+	gh_ElementID int,
+	gh_ElementType varchar(30),
+	SkillName varchar(50),
+	--Constraints on the Skills table
+	CONSTRAINT PK_gh_Skills PRIMARY KEY (gh_SkillsID),
+	CONSTRAINT FK1_gh_Skills FOREIGN KEY (gh_CasterID) REFERENCES gh_Caster(gh_CasterID),
+	CONSTRAINT FK2_gh_Skills FOREIGN KEY (gh_ElementID) REFERENCES gh_Element(gh_ElementID)
+	)
+-- End creating the Skills table
+
+-- Adding Data to the Caster table
+INSERT INTO gh_Caster(CasterName, CasterType, ElementType, Age, Academy, HomeCity)
+	VALUES
+		  ('Merlin', 'Mage', 'Earth', '450', 'White Citadel', 'Carmarthen'),
+		  ('Glinda The Good Witch', 'Sorceress', 'Fire', '120', 'Secondary School Of Witchcraft', 'Oz'),
+		  ('Stephen Strange', 'Warlock', 'Death', '44', 'Strange Academy', 'NYC'),
+		  ('George Pickingill', 'Druid', 'Earth', '840', 'Canewdon Coven', 'Essex'),
+		  ('Angela de la Barthe', 'Enchantress', 'Fire', '43', 'Deadly Coven', 'London'),
+		  ('Magus', 'Cleric', 'Life', '128', 'School of Life', 'Astraguard'),
+		  ('Ammon Jerro', 'Necromancer', 'Death', '215', 'School of Death', 'The Dark Hollow'),
+		  ('Shang Tsung', 'Necromancer', 'Death', '850', 'Outworld Sorcerer Guild', 'Outworld'),
+		  ('Morgan Le Fay', 'Enchantress', 'Water', '32', 'White Citadel', 'Carmarthen'),
+		  ('Aleister Crowley', 'Mage', 'Water', '99', 'Thelema School of Magic', 'Cairo'),
+		  ('John Domingo', 'Sorcerer', 'Earth', '150', 'Charleston Academy', 'Charleston'),
+		  ('Kalypso', 'Summoner', 'Earth', '10051', 'Ogygia School of Thought', 'Ogygia'),
+		  ('Kirke', 'Mage', 'Fire', '840', 'Aeaea Academy', 'Aeaea'),
+		  ('Agatha Harkness', 'Necromancer', 'Death', '65', 'The First Death School', 'Mystic Peak'),
+		  ('Lucinda Nightbane', 'Enchantress', 'Thunder', '28', 'Tolis School of Magic', 'Shadow Realm'),
+		  ('Jennifer Kale', 'Cleric', 'Life', '70', 'Madam Marias School of Life', 'Gallenie'),
+		  ('Mad Hettie', 'Summoner', 'Life', '44', 'Endless School of Learning', 'NYC'),
+		  ('Zelda Spellman', 'Sorceress', 'Water', '52', 'Frostguard Academy', 'Pittsburgh'),
+		  ('Frost King', 'Warlock', 'Water', '114', 'Frozen Heart', 'The White Peaks'),
+		  ('James Frostweaver', 'Mage', 'Water', '216', 'Winterfell Academy', 'The White Peaks'),
+		  ('Firestrike', 'Mage', 'Fire', '32', 'FlamePyre Academy', 'FlamePyre'),
+		  ('Emberlin', 'Warlock', 'Fire', '64', 'Sunfire Academy', 'FlamePyre'),
+		  ('Ramus', 'Sorcerer', 'Thunder', '120', 'Cloud Academy', 'The Great Cliffs'),
+		  ('Lightbringer', 'Mage', 'Thunder', '430', 'Cloud Academy', 'Barren Plains'),
+		  ('Cascara', 'Summoner', 'Water', '620', 'The Drowned Academy', 'Sea Gulf'),
+		  ('Araxie', 'Sorceress', 'Water', '99', 'Sea Guild for Learning', 'Pacific City'),
+		  ('Draxus', 'Warlock', 'Death', '190', 'Temple of the Damned', 'Barren Depths'),
+		  ('Acostos', 'Summoner', 'Death', '750', 'The Plagued Academy', 'Artus'),
+		  ('Nahla', 'Druid', 'Earth', '220', 'Helas School of Conjuration', 'Silverpine Forest'),
+		  ('Maxwell the Good', 'Cleric', 'Life', '22', 'Lifeforce Academy', 'Holy City')
+
+
+
+
+
+
+
+
+
+
+
+SELECT * FROM gh_Caster
+ORDER BY ElementType
+
+-- Adding Data to the Payment table
+INSERT INTO gh_Payment(gh_CasterID, Gold, Silver)
+	VALUES
+		  (1, '14', '13'),
+		  (2, '0', '55'),
+		  (3, '1', '25'),
+		  (4, '0', '13'),
+		  (5, '0', '34'),
+		  (6, '5', '72'),
+		  (7, '14', '13'),
+		  (8, '0', '78'),
+		  (9, '8', '19'),
+		  (10, '13', '13'),
+		  (11, '0', '66'),
+		  (12, '3', '50'),
+		  (13, '0', '45'),
+		  (14, '2', '27'),
+		  (15, '6', '22'),
+		  (16, '0', '13'),
+		  (17, '0', '58'),
+		  (18, '8', '36'),
+		  (19, '12', '65'),
+		  (20, '0', '88'),
+		  (21, '1', '19'),
+		  (22, '0', '15'),
+		  (23, '0', '77'),
+		  (24, '2', '90'),
+		  (25, '10', '13'),
+		  (26, '1', '99'),
+		  (27, '0', '55'),
+		  (28, '18', '0'),
+		  (29, '0', '27'),
+		  (30, '8', '15')
+
+		  SELECT * FROM gh_Payment
+
+
+
+-- Adding data to the Element table
+INSERT INTO gh_Element(ElementType, Mastery, gh_CasterID)
+	VALUES
+		  ('Earth', 'Grand Master', 1),
+		  ('Fire', 'Adept', 2),
+		  ('Death', 'Master', 3),
+		  ('Earth', 'Apprentice', 4),
+		  ('Fire', 'Adept', 5),
+		  ('Life', 'Master', 6),
+		  ('Death', 'Grand Master', 7),
+		  ('Death', 'Adept', 8),
+		  ('Water', 'Master', 9),
+		  ('Water', 'Grand Master', 10),
+		  ('Earth', 'Apprentice', 11),
+		  ('Earth', 'Master', 12),
+		  ('Fire', 'Grand Master', 13),
+		  ('Death', 'Adept', 14),
+		  ('Thunder', 'Master', 15),
+		  ('Life', 'Apprentice', 16),
+		  ('Life', 'Adept', 17),
+		  ('Water', 'Master', 18),
+		  ('Water', 'Grand Master', 19),
+		  ('Water', 'Adept', 20),
+		  ('Fire', 'Master', 21),
+		  ('Fire', 'Apprentice', 22),
+		  ('Thunder', 'Adept', 23),
+		  ('Thunder', 'Master', 24),
+		  ('Water', 'Grand Master', 25),
+		  ('Water', 'Adept', 26),
+		  ('Death', 'Apprentice', 27),
+		  ('Death', 'Grand Master', 28),
+		  ('Earth', 'Adept', 29),
+		  ('Life', 'Master', 30)
+
+		  SELECT * FROM gh_Element
+
+
+
+SELECT * 
+FROM gh_Caster
+     INNER JOIN gh_Element ON gh_Caster.gh_CasterID = gh_Element.gh_CasterID
+	 WHERE gh_Element.ElementType = 'Fire'
+
+
+	 
+SELECT * 
+FROM gh_Element
+     INNER JOIN gh_Payment ON gh_Element.gh_CasterID = gh_Payment.gh_CasterID
+	 WHERE gh_Element.Mastery = 'Master'
+
+	 SELECT * 
+FROM gh_Caster
+     INNER JOIN gh_Stats ON gh_Caster.gh_CasterID = gh_Stats.gh_CasterID
+
+	 	 SELECT * 
+FROM gh_Caster
+     INNER JOIN gh_Skills ON gh_Caster.gh_CasterID = gh_Skills.gh_CasterID
+	 ORDER BY SkillName
+	
+
+
+		 	 SELECT *
+FROM gh_Caster
+     INNER JOIN gh_Spells ON gh_Caster.ElementType = gh_Spells.gh_ElementType
+	 ORDER BY SpellName
+	 
+
+
+
+
+
+-- Adding data to the Skills table
+INSERT INTO gh_Skills(SkillName, gh_CasterID, gh_ElementType)
+	VALUES
+		  ('Logistics', 1, 'Non Elemental'),
+		  ('Logistics', 11, 'Non Elemental'),
+		  ('Logistics', 13, 'Non Elemental'),
+		  ('Logistics', 8, 'Non Elemental'),
+		  ('Dark Renewal', 3, 'Death'),
+		  ('Dark Renewal', 7, 'Death'),
+		  ('Dark Renewal', 8, 'Death'),
+		  ('Dark Renewal', 14, 'Death'),
+		  ('Dark Renewal', 27, 'Death'),
+		  ('Dark Renewal', 28, 'Death'),
+		  ('Archery', 4, 'Non Elemental'),
+		  ('Archery', 7, 'Non Elemental'),
+		  ('Archery', 12, 'Non Elemental'),
+		  ('Armored', 5, 'Non Elemental'),
+		  ('Resistance', 6, 'Non Elemental'),
+		  ('Resistance', 18, 'Non Elemental'),
+		  ('Resistance', 1, 'Non Elemental'),
+		  ('Leadership', 14, 'Non Elemental'),
+		  ('Leadership', 20, 'Non Elemental'),
+		  ('Leadership', 7, 'Non Elemental'),
+		  ('Luck', 25, 'Non Elemental'),
+		  ('Luck', 2, 'Non Elemental'),
+		  ('Luck', 8, 'Non Elemental'),
+		  ('Tactics', 9, 'Non Elemental'),
+		  ('Tactics', 7, 'Non Elemental'),
+		  ('Tactics', 21, 'Non Elemental'),
+		  ('Tactics', 26, 'Non Elemental'),
+		  ('Tactics', 12, 'Non Elemental'),
+		  ('First Aid', 10, 'Non Elemental'),
+		  ('First Aid', 24, 'Non Elemental'),
+		  ('First Aid', 21, 'Non Elemental'),
+		  ('First Aid', 1, 'Non Elemental'),
+		  ('First Aid', 19, 'Non Elemental'),
+		  ('Necromancy', 3, 'Death'),
+		  ('Necromancy', 7, 'Death'),
+		  ('Necromancy', 8, 'Death'),
+		  ('Necromancy', 14, 'Death'),
+		  ('Necromancy', 27, 'Death'),
+		  ('Necromancy', 28, 'Death'),
+		  ('Diplomacy', 17, 'Non Elemental'),
+		  ('Diplomacy', 6, 'Non Elemental'),
+		  ('Diplomacy', 19, 'Non Elemental'),
+		  ('Diplomacy', 22, 'Non Elemental'),
+		  ('Pathfinding', 13, 'Non Elemental'),
+		  ('Pathfinding', 10, 'Non Elemental'),
+		  ('Navigation', 14, 'Non Elemental'),
+		  ('Navigation', 17, 'Non Elemental'),
+		  ('Air Magic', 15, 'Thunder'),
+		  ('Air Magic', 23, 'Thunder'),
+		  ('Air Magic', 24, 'Thunder'),
+		  ('Fire Magic', 5, 'Fire'),
+		  ('Fire Magic', 13, 'Fire'),
+		  ('Fire Magic', 2, 'Fire'),
+		  ('Fire Magic', 21, 'Fire'),
+		  ('Fire Magic', 22, 'Fire'),
+		  ('Water Magic', 9, 'Water'),
+		  ('Water Magic', 10, 'Water'),
+		  ('Water Magic', 25, 'Water'),
+		  ('Water Magic', 26, 'Water'),
+		  ('Water Magic', 18, 'Water'),
+		  ('Water Magic', 19, 'Water'),
+		  ('Water Magic', 20, 'Water'),
+		  ('Earth Magic', 29, 'Earth'),
+		  ('Earth Magic', 1, 'Earth'),
+		  ('Earth Magic', 11, 'Earth'),
+		  ('Earth Magic', 12, 'Earth'),
+		  ('Earth Magic', 4, 'Earth')
+
+		  
+
+
+
+
+
+		  SELECT * FROM gh_Skills
+
+
+-- Adding data to the Spells table
+INSERT INTO gh_Spells(SpellName, gh_ElementType)
+	VALUES
+		  ('Shape Shift', 'Earth'),
+		  ('Flame Pyre', 'Fire'),
+		  ('Death Stare', 'Death'),
+		   ('Fire Enchant', 'Fire'),
+		   ('Bloodlust', 'Fire'),
+		  ('Cure', 'Life'),
+		  ('Curse', 'Death'),
+		   ('Dispell', 'Water'),
+		   ('Bless', 'Life'),
+		  ('Haste', 'Thunder'),
+		  ('Slow', 'Death'),
+		   ('Death Ripple', 'Death'),
+		   ('Stone Skin', 'Earth'),
+		  ('Blind', 'Fire'),
+		  ('Holy Shield', 'Life'),
+		   ('Fire Bolt', 'Fire'),
+		   ('Lightning Bolt', 'Thunder'),
+		  ('Magic Arrow', 'Thunder'),
+		  ('Ice Bolt', 'Water'),
+		   ('Quicksand', 'Earth'),
+		   ('Precision', 'Thunder'),
+		  ('Fire Wall', 'Fire'),
+		  ('Vampiric Aura', 'Death'),
+		   ('Forgetfulness', 'Life'),
+		   ('Mirth', 'Life'),
+		  ('Misfortune', 'Death'),
+		  ('Armageddon', 'Fire'),
+		   ('Earthquake', 'Earth'),
+		   ('Summon Water Elemental', 'Water'),
+		  ('Destroy Undead', 'Life'),
+		  ('Frost Ring', 'Water'),
+		   ('Hypnotize', 'Life'),
+		   ('Inferno', 'Fire'),
+		  ('Fire Shield', 'Fire'),
+		  ('CounterStrike', 'Thunder'),
+		   ('Chain Lightning', 'Thunder'),
+		   ('Meteor Shower', 'Earth'),
+		  ('Sorrow', 'Life'),
+		  ('Prayer', 'Life'),
+		   ('Slayer', 'Death'),
+		   ('Ressurection', 'Life'),
+		  ('Water Walk', 'Water'),
+		  ('Fly', 'Thunder'),
+		   ('Titan Bolt', 'Thunder'),
+		   ('Conjure Phoenix', 'Fire'),
+		  ('Summon Phantom Spectre', 'Death'),
+		  ('Decay', 'Death'),
+		   ('Retribution', 'Life'),
+		   ('Celestial Armor', 'Life'),
+		  ('Great Vine', 'Earth'),
+		  ('Doom', 'Death'),
+		   ('Pain Mirror', 'Thunder'),
+		   ('Summon Elf', 'Earth'),
+		  ('Summon Griffin', 'Earth'),
+		  ('Raise Vampires', 'Death'),
+		   ('Tidal Wave', 'Water')
+
+
+
+		  SELECT * FROM gh_Spells
+
+
+-- Adding data to the Stats table
+INSERT INTO gh_Stats(gh_CasterID, Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma)
+	VALUES
+		  (1, 15, 10, 35, 80, 95, 40),
+		  (2, 18, 35, 30, 50, 60, 15),
+		  (3, 20, 25, 50, 42, 40, 75),
+		  (4, 6, 18, 51, 91, 42, 12),
+		  (5, 95, 76, 41, 15, 33, 48),
+		  (6, 90, 54, 87, 36, 51, 89),
+		  (7, 81, 59, 78, 2, 91, 12),
+		  (8, 18, 35, 30, 50, 60, 15),
+		  (9, 54, 9, 41, 42, 60, 5),
+		  (10, 45, 91, 60, 52, 63, 36),
+		  (11, 98, 64, 65, 31, 59, 71),
+		  (12, 79, 76, 74, 8, 68, 98),
+		  (13, 15, 10, 35, 80, 95, 40),
+		  (14, 47, 96, 75, 17, 18, 12),
+		  (15, 56, 19, 12, 18, 34, 63),
+		  (16, 43, 69, 41, 58, 52, 15),
+		  (17, 39, 78, 84, 29, 23, 83),
+		  (18, 22, 52, 60, 43, 75, 7),
+		  (19, 35, 85, 12, 4, 100, 27),
+		  (20, 10, 64, 96, 28, 19, 27),
+		  (21, 98, 74, 17, 46, 36, 47),
+		  (22, 10, 64, 50, 48, 81, 92),
+		  (23, 57, 3, 63, 68, 35, 74),
+		  (24, 49, 21, 39, 69, 32, 74),
+		  (25, 61, 100, 1, 31, 2, 59),
+		  (26, 41, 61, 31, 32, 34, 18),
+		  (27, 78, 83, 92, 33, 35, 9),
+		  (28, 94, 66, 97, 92, 67, 69),
+		  (29, 24, 34, 61, 84, 52, 32),
+		  (30, 58, 42, 91, 67, 53, 50)
+
+
+		  SELECT * FROM gh_Stats
+
+
+/*
+Testing out the DB with some simple queries
+*/
+
+
+
+SELECT * 
+FROM gh_Caster
+     INNER JOIN gh_Payment ON gh_Caster.gh_CasterID = gh_Payment.gh_CasterID
+	 ORDER BY gh_Payment.Gold DESC
+
+
+	 
+SELECT * 
+FROM gh_Element
+     INNER JOIN gh_Payment ON gh_Element.gh_CasterID = gh_Payment.gh_CasterID
+	 WHERE gh_Element.Mastery = 'Master'
+
+
+SELECT * 
+FROM gh_Caster
+     INNER JOIN gh_Stats ON gh_Caster.gh_CasterID = gh_Stats.gh_CasterID
+
+
+SELECT * 
+FROM gh_Caster
+     INNER JOIN gh_Skills ON gh_Caster.gh_CasterID = gh_Skills.gh_CasterID
+	 ORDER BY SkillName
+	
+
+SELECT *
+FROM gh_Caster
+     INNER JOIN gh_Spells ON gh_Caster.ElementType = gh_Spells.gh_ElementType
+	 ORDER BY CasterName
+
+
+
+SELECT * 
+FROM gh_Element
+	WHERE Mastery = 'Grand Master'
+
+/* 
+Looking at spells by Element type
+*/
+SELECT * FROM gh_Spells
+ORDER BY gh_ElementType
+
+
+
+/* 
+Create View of Casters and their Mastery
+*/
+
+
+
+GO
+CREATE VIEW CastersMastery
+AS
+SELECT 
+	gh_Caster.CasterName as CasterName,
+	gh_Caster.CasterType as CasterType,
+	gh_Caster.ElementType as ElementType,
+	gh_Element.Mastery as Mastery
+	
+FROM gh_Caster
+INNER JOIN gh_Element ON gh_ElementID = gh_Caster.gh_CasterID
+GO
+SELECT*FROM CastersMastery
+ORDER BY Mastery
+
+
+
+/* 
+Create View of Casters and their spells
+*/
+
+GO
+CREATE VIEW CastersSpells
+AS
+SELECT 
+	gh_Caster.CasterName as CasterName,
+	gh_Caster.CasterType as CasterType,
+	gh_Caster.ElementType as ElementType,
+	gh_Spells.SpellName as Spells
+	
+FROM gh_Caster
+INNER JOIN gh_Spells ON gh_Spells.gh_ElementType = gh_Caster.ElementType
+GO
+SELECT*FROM CastersSpells
+ORDER BY ElementType
+
+
+/*
+Selecting all Death Warlocks from our view
+*/
+Select * 
+FROM CastersSpells
+WHERE CasterType = 'Warlock'AND ElementType = 'Death'
+
+
+
+
+/*
+	Create a function to retrieve a gh_ElementType for a given Caster name
+*/
+GO
+CREATE FUNCTION dbo.gh_CasterLookup(@CasterName varchar(30))
+RETURNS varchar(30) AS
+BEGIN
+	DECLARE @returnValue varchar(30)
+	SELECT @returnValue = ElementType FROM gh_Caster AS ElementType
+	WHERE CasterName = @CasterName
+	
+	RETURN @returnValue
+END
+GO
+
+SELECT 'Function To Check Element Type', dbo.gh_CasterLookup('Merlin') 
+
+
+
+-- Create a procedure to update a Casters type
+-- The first parameter is the caster name for the user to change
+-- The second is the new caster type
+
+GO
+CREATE PROCEDURE gh_ChangeCasterType(@CasterName varchar(20), @newType varchar(50))
+AS
+BEGIN
+	UPDATE gh_Caster SET CasterType = @newType
+	WHERE CasterName = @CasterName
+END
+
+
+EXEC gh_ChangeCasterType 'Merlin', 'Sorcerer'
+
+SELECT * FROM gh_Caster WHERE CasterName = 'Merlin'
+
+
+-- Which casters possess the most non magic skills
+
+	
+GO
+CREATE VIEW CasterSkill
+AS
+SELECT gh_Skills.gh_ElementType, COUNT(*) AS SkillCount
+	
+FROM gh_Skills
+	INNER JOIN gh_Caster ON gh_Skills.gh_CasterID = gh_Caster.gh_CasterID 
+WHERE gh_Skills.gh_ElementType = 'Non Elemental'
+GROUP BY gh_Skills.gh_ElementType, gh_Caster.CasterName 
+
+SELECT * FROM CasterSkill
+
+
+
+
+-- Which casters know the most spells
+
+DROP VIEW SpellCount
+
+SELECT *
+FROM gh_Caster
+INNER JOIN gh_Skills ON gh_Skills.gh_CasterID = gh_Caster.gh_CasterID
+ORDER BY CasterName
+
+-- Which casters have the highest mastery and stats
+
+DROP VIEW CastersStats
+
+
+GO
+CREATE VIEW CastersStats
+AS
+SELECT 
+	gh_Caster.CasterName as CasterName,
+	gh_Stats.Charisma as Charisma,
+	gh_Stats.Dexterity as Dexterity,
+	gh_Stats.Charisma as Constitution,
+	gh_Stats.Intelligence as Intelligence,
+	gh_Stats.Strength as Strength,
+	gh_Stats.Wisdom as Wisdom,
+	gh_Element.Mastery as Mastery
+	
+FROM gh_Caster
+JOIN gh_Element ON gh_ElementID = gh_Caster.gh_CasterID
+JOIN gh_Stats ON gh_StatsID = gh_Caster.gh_CasterID
+GO
+SELECT*FROM CastersStats
+ORDER BY Mastery DESC, Intelligence DESC 
+
+
+DROP VIEW CasterPay
+	
+GO
+
+
+-- A view to look at the spellcaster mastery and their price
+CREATE VIEW CasterPay
+
+AS
+SELECT 
+	gh_Caster.CasterName as CasterName,
+	gh_Caster.ElementType as ElementType,
+	gh_Payment.gh_PaymentID as PaymentID,
+	gh_Element.Mastery as Mastery,
+	gh_Payment.Gold as Gold,
+	gh_Payment.Silver as Silver
+	
+FROM gh_Caster
+INNER JOIN gh_Payment ON gh_Payment.gh_PaymentID = gh_Caster.gh_CasterID
+INNER JOIN gh_Element ON gh_Element.gh_ElementID = gh_Caster.gh_CasterID
+GO
+SELECT*FROM CasterPay
+ORDER BY Mastery DESC, Gold DESC
+
